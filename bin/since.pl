@@ -7,7 +7,7 @@ use warnings;
 use Carp;
 use Data::Dumper;
 
-use Fcntl qw/SEEK_CUR SEEK_SET O_RDWR O_CREAT/;
+use Fcntl qw/SEEK_SET O_RDWR O_CREAT/;
 use Getopt::Long;
 
 my $db_filename = "$ENV{HOME}/.psince";
