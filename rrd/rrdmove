@@ -1,0 +1,96 @@
+#! /usr/bin/perl
+# Move data from one RRD to another
+# (c) 2009 - Steve Schnepp <steve.schnepp@pwkf.org>
+
+use strict;
+use warnings;
+use Carp;
+use Data::Dumper;
+
+use RRDs;
+
+my ($src_rrd, $dst_rrd) = @ARGV;
+
+my $infos_src = RRDs::info($src_rrd);
+my $infos_dst = RRDs::info($dst_rrd);
+
+
+#get ds_names
+my @ds_names;
+foreach my $key (keys %$infos_src) {
+	if ($key =~ /^ds\[(\w+)\]\.type$/) {
+		push @ds_names, $1;
+	}
+}
+
+my ($start, $stop, $step);
+$step = $infos_dst->{'step'};
+$stop = $infos_src->{'last_update'};
+
+my @rra_names;
+foreach my $key (keys %$infos_dst) {
+	if ($key =~ /^rra\[(\w+)\]\.cf$/) { 
+		push @rra_names, $1;
+	}
+}
+
+foreach my $rra_name (sort {$a <=> $b} @rra_names) {
+	my $rows = $infos_dst->{"rra[$rra_name].rows"};
+	my $pdp_per_row = $infos_dst->{"rra[$rra_name].pdp_per_row"};
+
+	my $rra_start = $stop - $rows * $pdp_per_row * $step;
+	if ( (! defined $start) || $start > $rra_start) {
+		$start = $rra_start;
+	}
+
+	print "rra[$rra_name]:$rra_start("
+		. (scalar localtime($rra_start)) 
+		. "):$start("
+		. (scalar localtime($start))
+		.")\n";
+}
+
+$start = 1240020352;
+
+# Converting
+for (my $epoch = $start; $epoch <= $stop; $epoch += $step) {
+
+	# Resampling by taking the average value for the period
+	my ($fetched_epoch, $fetched_step, $names, $data) = RRDs::fetch(
+		$src_rrd,
+		"AVERAGE",
+		"--start", $epoch,
+		"--end", $epoch + $step,
+	);
+
+	foreach my $line (@$data) {
+		print "$epoch(". (scalar localtime($epoch)) . ") { ";
+		my $ds_idx = 0;
+		for my $ds (@$names) {
+			print "$ds:" . ($line->[$ds_idx]||"") . ", ";
+
+
+
+			$ds_idx++;
+		}
+		print "}\n";
+
+		no warnings;
+
+		my @values = map { defined $_ ? $_ : "U" } @$line;
+		
+		# Just do an unit update. 
+		RRDs::update(
+			$dst_rrd,
+			"--template", join(':', @$names), "$epoch:" . join(':', @values),
+		);
+
+		$fetched_epoch += $fetched_step;
+	}
+}
+
+foreach my $ds_name (@ds_names) {
+	print "ds:$ds_name\n";
+}
+
+print "step:$step\n";
