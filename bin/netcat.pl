@@ -16,6 +16,8 @@ my $verbose;
 my $local_port;
 my $listen;
 
+$SIG{CHLD} = 'IGNORE';
+
 my $result = GetOptions(
         "help|h" => \$help,
         "verbose|v" => \$verbose,
@@ -68,13 +70,15 @@ if ($listen) {
 
 sub copy_data_bidi {
 	my ($socket) = @_;
-	my $pid = fork();
-	if (! $pid) {
+	my $child_pid = fork();
+	if (! $child_pid) {
+		close(STDIN);
 		copy_data_mono($socket, *STDOUT);
 		exit(); # exits the child helper process
 	} else {
+		close(STDOUT);
 		copy_data_mono(*STDIN, $socket);
-		wait(); # waits for the child helper process to finish
+		kill("TERM", $child_pid);
 	}
 }
 
@@ -85,7 +89,7 @@ sub copy_data_mono {
 	while (my $read_len = sysread($src, $buf, 4096)) {
 		my $write_len = $read_len;
 		while ($write_len) {
-			my $written_len = syswrite($dst, $buf, $write_len);
+			my $written_len = syswrite($dst, $buf);
 			return unless $written_len; # $dst is closed
 			$write_len -= $written_len;
 		}
