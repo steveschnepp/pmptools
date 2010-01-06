@@ -47,9 +47,7 @@ if ($listen) {
 	) or die "Could not create socket: $!";
 
 	my $a_sock = $l_sock->accept(); 
-	while(<$a_sock>) {
-		print $_;
-	}
+	copy_data_bidi($a_sock);
 } else {
 	if (scalar @ARGV < 2) {
 		die "You must specify where to connect in client mode\n";
@@ -65,7 +63,31 @@ if ($listen) {
 		PeerPort => $remote_port,
 	) or die "Could not create socket: $!";
 
-	while (<STDIN>) {
-		print $c_sock $_;
+	copy_data_bidi($c_sock);
+}
+
+sub copy_data_bidi {
+	my ($socket) = @_;
+	my $pid = fork();
+	if (! $pid) {
+		copy_data_mono($socket, *STDOUT);
+		exit(); # exits the child helper process
+	} else {
+		copy_data_mono(*STDIN, $socket);
+		wait(); # waits for the child helper process to finish
+	}
+}
+
+sub copy_data_mono {
+	my ($src, $dst) = @_;
+
+	my $buf;
+	while (my $read_len = sysread($src, $buf, 4096)) {
+		my $write_len = $read_len;
+		while ($write_len) {
+			my $written_len = syswrite($dst, $buf, $write_len);
+			return unless $written_len; # $dst is closed
+			$write_len -= $written_len;
+		}
 	}
 }
