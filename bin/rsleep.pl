@@ -6,12 +6,17 @@
 #
 # (c) 2010 LGPL - Steve Schnepp <steve.schnepp@pwkf.org>
 
+# The usual stuff
 use strict;
 use warnings;
 
 # Be able to have fractional second sleeps
 use Time::HiRes qw(sleep);
 
+# Avoid having a timing information
+die "You have to specify a timing & a command" unless (scalar @ARGV);
+
+# Reading timing
 my $time_human = shift;
 
 # Dictionary to convert units to seconds
@@ -33,8 +38,8 @@ if ($time_human =~ m/^([0-9.]+)([smhd])$/) {
 	$time_sec = 0 + $time_human;
 }
 
-# Now sleep
-sleep($time_sec);
+# Now sleep some random time, up to $time_sec seconds
+sleep( rand($time_sec) );
 
 # Nothing to exec, exit
 exit unless scalar @ARGV;
