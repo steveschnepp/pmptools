@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 # Move data from one RRD to another
-# (c) 2009 - Steve Schnepp <steve.schnepp@pwkf.org>
+# (c) 2009-2011 - Steve Schnepp <steve.schnepp@pwkf.org>
 
 use strict;
 use warnings;
@@ -13,7 +13,6 @@ my ($src_rrd, $dst_rrd) = @ARGV;
 
 my $infos_src = RRDs::info($src_rrd);
 my $infos_dst = RRDs::info($dst_rrd);
-
 
 #get ds_names
 my @ds_names;
@@ -47,50 +46,51 @@ foreach my $rra_name (sort {$a <=> $b} @rra_names) {
 		. (scalar localtime($rra_start)) 
 		. "):$start("
 		. (scalar localtime($start))
-		.")\n";
+		.")\n" if $ENV{DEBUG} && $ENV{DEBUG} >= 2;
 }
 
-$start = 1240020352;
-
+#$start = 1240020352;
+	
 # Converting
-for (my $epoch = $start; $epoch <= $stop; $epoch += $step) {
+my ($step_sample) = $step * 128;
+for (my $epoch = $start; $epoch <= $stop; $epoch += $step_sample) {
+	my @rrd_updates;
 
 	# Resampling by taking the average value for the period
 	my ($fetched_epoch, $fetched_step, $names, $data) = RRDs::fetch(
 		$src_rrd,
 		"AVERAGE",
 		"--start", $epoch,
-		"--end", $epoch + $step,
+		"--end", $epoch + $step_sample,
 	);
 
-	foreach my $line (@$data) {
-		print "$epoch(". (scalar localtime($epoch)) . ") { ";
-		my $ds_idx = 0;
-		for my $ds (@$names) {
-			print "$ds:" . ($line->[$ds_idx]||"") . ", ";
 
+	for my $line ( @$data ) {
 
-
-			$ds_idx++;
+		my %current_data;
+		for ( my $ds_idx = 0; $ds_idx < scalar @$line; $ds_idx ++) {
+			my $name = $names->[$ds_idx];
+			my $value = $line->[$ds_idx];
+			$current_data{$name} = $value;	
 		}
-		print "}\n";
 
-		no warnings;
+		# Create the template
+		my @values = map { defined $current_data{$_} ? $current_data{$_} : "U" } @ds_names;
 
-		my @values = map { defined $_ ? $_ : "U" } @$line;
+		# Ignore lines with all values set to "U"
+		next unless grep { $_ ne "U" } @values;
 		
-		# Just do an unit update. 
-		RRDs::update(
-			$dst_rrd,
-			"--template", join(':', @$names), "$epoch:" . join(':', @values),
-		);
+		push @rrd_updates, "$fetched_epoch:" . join(':', @values);
 
-		$fetched_epoch += $fetched_step;
+		$fetched_epoch += $step;
 	}
+
+	next unless @rrd_updates; 
+	print "RRDs::update($dst_rrd, --template, " . join(':', @ds_names) . ", " . join(", ", @rrd_updates) . "\n" if $ENV{DEBUG};
+	RRDs::update(
+		$dst_rrd,
+		"--template", join(':', @ds_names), 
+		@rrd_updates,
+	) or die "RRDs::update: $!";
 }
 
-foreach my $ds_name (@ds_names) {
-	print "ds:$ds_name\n";
-}
-
-print "step:$step\n";
