@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 # Move data from one RRD to another
-# (c) 2009-2011 - Steve Schnepp <steve.schnepp@pwkf.org>
+# (c) LGPL - 2009-2011 - Steve Schnepp <steve.schnepp@pwkf.org>
 
 use strict;
 use warnings;
