@@ -1,6 +1,28 @@
 #! /usr/bin/perl
 # Move data from one RRD to another
 # (c) LGPL - 2009-2011 - Steve Schnepp <steve.schnepp@pwkf.org>
+# 
+# Usage : rrdmove <src.rrd> <dst.rrd>
+# 
+# Both RRD have to exist and have the same DS (DataSource). 
+# The tool copies all the datasources from the sources into the destination
+# like you mean it: 
+#  - start is the oldest value from src 
+#     (but cannot be younger as the youngest from dst)
+#  - stop is the youngest value from src
+#  - asks src for the AVERAGED value on each step time.
+# 
+# It doesn't do any MIN/MAX replication since this information 
+# is usually not accurate at all when resampling.
+#
+# The environmment variable DEBUG is used like : 
+# 0/absent - no debug
+# 1        - emit to stdout all the updates to dst
+# 2        - emit also the data that try
+#
+# XXX - It depends on RRDs.pm ...
+# ... as I'm waiting for a patch to use the plain rrdtool cli :-)
+#
 
 use strict;
 use warnings;
