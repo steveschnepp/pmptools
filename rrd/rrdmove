@@ -2,6 +2,11 @@
 # Move data from one RRD to another
 # (c) LGPL - 2009-2011 - Steve Schnepp <steve.schnepp@pwkf.org>
 # 
+# #########
+# THIS TOOL IS OSOBLETE, ITS DEV HAS MOVED IN THE MUNIN PROJECT
+# http://munin-monitoring.org/browser/trunk/contrib/rrdcopy
+# #########
+#
 # Usage : rrdmove <src.rrd> <dst.rrd>
 # 
 # Both RRD have to exist and have the same DS (DataSource). 
