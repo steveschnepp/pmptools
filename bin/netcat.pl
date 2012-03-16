@@ -49,6 +49,7 @@ if ($listen) {
 	) or die "Could not create socket: $!";
 
 	my $a_sock = $l_sock->accept(); 
+	$l_sock->shutdown(SHUT_RDWR);
 	copy_data_bidi($a_sock);
 } else {
 	if (scalar @ARGV < 2) {
@@ -74,10 +75,12 @@ sub copy_data_bidi {
 	if (! $child_pid) {
 		close(STDIN);
 		copy_data_mono($socket, *STDOUT);
+		$socket->shutdown(SHUT_RD);
 		exit(); # exits the child helper process
 	} else {
 		close(STDOUT);
 		copy_data_mono(*STDIN, $socket);
+		$socket->shutdown(SHUT_WR);
 		kill("TERM", $child_pid);
 	}
 }
