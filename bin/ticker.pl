@@ -8,15 +8,19 @@ use strict;
 use warnings;
 
 my $nb_processes = shift || 1;
+my $nb_iter = shift || 0;
 
 for my $i (1 .. $nb_processes) {
         next if fork();
 
 	my $counter = 1;
+	my $counter_iter = 1;
 
 	$SIG{ALRM} = sub {
 		print "$$: $counter\n";
 		$counter = 1;
+		$counter_iter ++;
+		if ($nb_iter && $counter_iter > $nb_iter) { exit(1); };
 		alarm(1);
 	};
 
@@ -29,4 +33,4 @@ for my $i (1 .. $nb_processes) {
 }
 
 # Waiting for childs
-while (wait()) { }
+while (wait() != -1) { }
