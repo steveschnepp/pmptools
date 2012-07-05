@@ -2,7 +2,7 @@
 # Burns CPU, to see if 
 # - the timeslices are well balanced on all the processes
 # - there is some CPU steal (for VMs guests)
-# - the number of virtual processors has a performance influence
+# - the number of virtual processors has a performance influence
 
 use strict;
 use warnings;
