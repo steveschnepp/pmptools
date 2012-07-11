@@ -1,0 +1,8 @@
+Miscellaneous tools, mostly for UNIX, when one doesn't have a rich GNU
+environment.
+
+The tools are focused on portability by simplicity. They try to emulate an
+almost standard CLI command in its the most used way.
+
+The tools are usually written in core Perl, that should be on all the "Hostile"
+servers out there :-) 
