@@ -25,11 +25,11 @@ if ($help) {
 	exit(1);
 }
 
-use NDBM_File;
+use SDBM_File;
 my %states;
 
 print STDERR "db_filename: $db_filename\n" if $verbose;
-tie(%states, 'NDBM_File', $db_filename, O_CREAT | O_RDWR, 0660)
+tie(%states, 'SDBM_File', $db_filename, O_CREAT | O_RDWR, 0660)
 	or die("cannot tie state to $db_filename : $!");
 
 while (my $filename = shift ) {
