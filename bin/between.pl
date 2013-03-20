@@ -10,6 +10,10 @@ my $stop = shift;
 
 my $is_between = 0;
 while (my $line = <>) {
+       # Note that the flip-flop (..) is not use on purpose as it only 
+       # switches properly if both states are mutally exclusive
+       # 
+       # see : http://perldoc.perl.org/perlop.html#Range-Operators
        if (! $is_between && $line =~ m/$start/) {
                $is_between++;
        }
