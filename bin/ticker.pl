@@ -39,5 +39,10 @@ sub compute {
 	while ($counter ++) { $computation += $computation * 7 + $computation >> 33; }
 }
 
+END {
+	# Kill the process group
+	kill (-1 * $$);
+};
+
 # Waiting for childs
 while (wait() != -1) { }
