@@ -7,11 +7,18 @@
 use strict;
 use warnings;
 
-my $nb_processes = shift || 1;
+my $nb_processes = shift; if (! defined $nb_processes) { $nb_processes = 1; };
 my $nb_iter = shift || 0;
 
 for my $i (1 .. $nb_processes) {
         next if fork();
+	compute($i);
+}
+
+compute(0) unless $nb_processes;
+
+sub compute {
+	my ($i) = @_;
 
 	my $counter = 1;
 	my $counter_iter = 1;
