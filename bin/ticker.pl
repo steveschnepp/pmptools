@@ -7,6 +7,9 @@
 use strict;
 use warnings;
 
+# No buffer, since we want to be able to pipe
+$| = 1;
+
 my $nb_processes = shift; if (! defined $nb_processes) { $nb_processes = 1; };
 my $nb_iter = shift || 0;
 
