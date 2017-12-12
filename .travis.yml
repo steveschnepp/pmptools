@@ -3,3 +3,6 @@ language: perl
 install: true
 script:
   - for perl_script in bin/*.pl; do perl -c $perl_script; done
+
+# Use docker
+sudo: false
