@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 # replacement of uniq(1) that doesn't need a sort
-# (c) LGPL 2017 - Steve Schnepp
+# (c) 2017 - Apache-2.0 - Steve Schnepp <steve.schnepp@pwkf.org>
 
 my %h;
 

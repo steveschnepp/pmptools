@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 # Poor man's ctail(1) in Perl
-# (C) 2007 Steve Schnepp - LGPL
+# (C) 2007 - Apache-2.0 - Steve Schnepp <steve.schnepp@pwkf.org>
 
 use strict;
 use warnings;

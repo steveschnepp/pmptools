@@ -4,7 +4,7 @@
 # Idea borrowed from blabla999 on the SO question : 
 # http://stackoverflow.com/questions/386945/limiting-certain-processes-to-cpu-linux
 #
-# (c) 2010 LGPL - Steve Schnepp <steve.schnepp@pwkf.org>
+# (c) 2010 - Apache-2.0 - Steve Schnepp <steve.schnepp@pwkf.org>
 
 # The usual stuff
 use strict;

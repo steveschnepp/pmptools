@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 # Perl port of since(1) from http://welz.org.za/projects/since
-# LGPL (c) 2008 Steve Schnepp <steve.schnepp@pwkf.org> 
+# (c) 2008 - Apache-2.0 - Steve Schnepp <steve.schnepp@pwkf.org>
 
 use strict;
 use warnings;

@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 # like head or tail, but between two regex
-# (c) 2010 - Steve Schnepp
+# (c) 2010 - Apache-2.0 - Steve Schnepp <steve.schnepp@pwkf.org>
 
 use strict;
 use warnings;

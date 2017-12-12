@@ -4,7 +4,7 @@
 # Idea borrowed from Bjørn Hansen 
 # http://www.askbjoernhansen.com/2007/11/19/space_out_cronjobs.html
 #
-# (c) 2010 LGPL - Steve Schnepp <steve.schnepp@pwkf.org>
+# (c) 2010 - Apache-2.0 - Steve Schnepp <steve.schnepp@pwkf.org>
 
 # The usual stuff
 use strict;

@@ -1,5 +1,6 @@
 #! /usr/bin/perl
 # Replacement for mktemp(1) 
+# (c) 2012 - Apache-2.0 - Steve Schnepp <steve.schnepp@pwkf.org>
 
 use Getopt::Long;
 use File::Temp qw/ tempdir /;

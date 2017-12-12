@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 # Removes a huge file without clogging up the I/O bandwidth
 # Idea borrowed from http://www.depesz.com/index.php/2010/04/04/how-to-remove-backups/
-# (c) 2010 LGPL - Steve Schnepp <steve.schnepp@pwkf.org>
+# (c) 2010 - Apache-2.0 - Steve Schnepp <steve.schnepp@pwkf.org>
 
 # TODO - Should implement these flags : 
 # rm generic flags : 
